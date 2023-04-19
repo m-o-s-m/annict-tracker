@@ -44,7 +44,7 @@ export const useLibraryEntry = () => {
 
       const response = await lookupPrograms([workSyobocalTid])
       return (
-        response.ProgLookupResponse?.ProgItems?.ProgItem?.reverse()?.filter(
+        response.ProgLookupResponse?.ProgItems?.ProgItem?.filter(
           (x) => x.Count === entry.nextEpisode?.number
         ) ?? []
       )

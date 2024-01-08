@@ -14,7 +14,7 @@ export default function Home(): React.JSX.Element {
     }
 
     const timeout = window.setTimeout(() => {
-      window.location.replace('https://annict-tracker.pages.dev')
+      window.location.replace('https://pre-production.annict-tracker-dgn.pages.dev')
     }, 10000)
 
     return () => {

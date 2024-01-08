@@ -1,7 +1,7 @@
 import type { Env } from './env.ts'
 
 const productionProtocol = 'https:'
-const productionHost = 'annict-tracker.pages.dev'
+const productionHost = 'annict-tracker-dgn.pages.dev'
 
 export const onRequest: PagesFunction<Env> = async (context) => {
   // 本番環境で指定された OAuth 2 クライアントは使用できないため、本番環境にリダイレクトする

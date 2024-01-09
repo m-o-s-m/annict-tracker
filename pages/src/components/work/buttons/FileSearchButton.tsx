@@ -34,6 +34,7 @@ type SearchIntegrationActionContext<K extends SearchIntegrationKey> = {
 
 type SearchIntegrationAction<K extends SearchIntegrationKey> = {
   title: string
+  channelName: string
   type: 'search' | 'vod'
   vod?: AnnictVodData
   icon: React.FC<TablerIconsProps>
@@ -44,6 +45,7 @@ type SearchIntegrationAction<K extends SearchIntegrationKey> = {
 const actions: { [K in SearchIntegrationKey]: SearchIntegrationAction<K> } = {
   everything: {
     title: 'Everything',
+    channelName: 'Everything',
     type: 'search',
     icon: IconBrandWindows,
     isAvailable(): boolean {
@@ -56,6 +58,7 @@ const actions: { [K in SearchIntegrationKey]: SearchIntegrationAction<K> } = {
   },
   epgstation: {
     title: 'EPGStation',
+    channelName: 'EPGStation',
     type: 'search',
     icon: IconDeviceTvOld,
     isAvailable({ config }): boolean {
@@ -73,6 +76,7 @@ const actions: { [K in SearchIntegrationKey]: SearchIntegrationAction<K> } = {
   },
   d_anime: {
     title: 'dアニメストア',
+    channelName: 'dアニメストア',
     type: 'vod',
     icon: IconMovie,
     isAvailable({ work, vods }): boolean {
@@ -100,6 +104,7 @@ const actions: { [K in SearchIntegrationKey]: SearchIntegrationAction<K> } = {
   },
   d_anime_niconico: {
     title: 'dアニメストア ニコニコ支店',
+    channelName: 'dアニメストア ニコニコ支店',
     type: 'vod',
     icon: IconMovie,
     isAvailable({ work, vods }): boolean {
@@ -128,6 +133,7 @@ const actions: { [K in SearchIntegrationKey]: SearchIntegrationAction<K> } = {
   },
   abema: {
     title: 'ABEMA',
+    channelName: 'ABEMAビデオ',
     type: 'vod',
     icon: IconMovie,
     isAvailable({ work, vods }): boolean {
@@ -153,6 +159,7 @@ const actions: { [K in SearchIntegrationKey]: SearchIntegrationAction<K> } = {
   },
   netflix: {
     title: 'Netflix',
+    channelName: 'Netflix',
     type: 'vod',
     icon: IconBrandNetflix,
     isAvailable({ work, vods }): boolean {
@@ -178,6 +185,7 @@ const actions: { [K in SearchIntegrationKey]: SearchIntegrationAction<K> } = {
   },
   prime_video: {
     title: 'Prime Video',
+    channelName: 'Amazon プライム・ビデオ',
     type: 'vod',
     icon: IconBrandAmazon,
     isAvailable({ work, vods }): boolean {
@@ -203,6 +211,7 @@ const actions: { [K in SearchIntegrationKey]: SearchIntegrationAction<K> } = {
   },
   niconico_channel: {
     title: 'ニコニコチャンネル',
+    channelName: 'ニコニコチャンネル',
     type: 'vod',
     icon: IconMovie,
     isAvailable({ work, vods }): boolean {
@@ -229,6 +238,7 @@ const actions: { [K in SearchIntegrationKey]: SearchIntegrationAction<K> } = {
   },
   bandai_channel: {
     title: 'バンダイチャンネル',
+    channelName: 'バンダイチャンネル',
     type: 'vod',
     icon: IconMovie,
     isAvailable({ work, vods }): boolean {
@@ -255,6 +265,7 @@ const actions: { [K in SearchIntegrationKey]: SearchIntegrationAction<K> } = {
   },
   youtube: {
     title: 'YouTube',
+    channelName: 'YouTube',
     type: 'search',
     icon: IconBrandYoutube,
     isAvailable(): boolean {
@@ -284,6 +295,11 @@ export function FileSearchButton({ entryRef, configs }: FileSearchButtonProps): 
           title
           annictId
         }
+        nextProgram {
+          channel {
+            name
+          }
+        }
         ...useShouldDisableButton_LibraryEntry
       }
     `,
@@ -304,14 +320,37 @@ export function FileSearchButton({ entryRef, configs }: FileSearchButtonProps): 
   const vods = useAnnictVodData()
 
   // 検索ソースが1つのときはそのまま検索ボタンにする
-  if (hasLength(integrations, 1)) {
-    const [integration] = integrations
+  // if (hasLength(integrations, 1)) {
+  //   const [integration] = integrations
+  //
+  //   return (
+  //     <Button
+  //       fullWidth
+  //       disabled={isDisabled}
+  //       leftSection={<IconSearch />}
+  //       mt="md"
+  //       radius="md"
+  //       variant="light"
+  //       // eslint-disable-next-line react/jsx-no-bind
+  //       onClick={() => {
+  //         integration.search({ work: entry.work, config: integration.config, vods })
+  //       }}
+  //     >
+  //       {integration.title}
+  //     </Button>
+  //   )
+  // }
 
+  // annict側で設定したストリーミングサービスで視聴可能な場合は視聴ページへのリンクを表示する
+  const integration = integrations.find((integration) =>
+    integration.isAvailable({ work: entry.work, config: integration.config, vods }) &&
+      entry.nextProgram?.channel.name === integration.channelName
+  )
+  if (integration) {
     return (
       <Button
         fullWidth
         disabled={isDisabled}
-        leftSection={<IconSearch />}
         mt="md"
         radius="md"
         variant="light"

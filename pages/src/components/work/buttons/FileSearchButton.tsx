@@ -28,6 +28,7 @@ import type { TablerIconsProps } from '@tabler/icons-react'
 
 type SearchIntegrationActionContext<K extends SearchIntegrationKey> = {
   work: { title: string; annictId: number }
+  nextProgramChannelName?: string
   config: SearchIntegrationConfig<K>
   vods?: AnnictVodData[]
 }
@@ -79,7 +80,8 @@ const actions: { [K in SearchIntegrationKey]: SearchIntegrationAction<K> } = {
     channelName: 'dアニメストア',
     type: 'vod',
     icon: IconMovie,
-    isAvailable({ work, vods }): boolean {
+    isAvailable({ work, nextProgramChannelName, vods }): boolean {
+      if (nextProgramChannelName === this.channelName) return true
       this.vod = vods?.find(
         (x) => x.work_id === work.annictId && x.channel_id === annictChannelIds.d_anime && x.vod_code !== undefined
       )
@@ -136,7 +138,8 @@ const actions: { [K in SearchIntegrationKey]: SearchIntegrationAction<K> } = {
     channelName: 'ABEMAビデオ',
     type: 'vod',
     icon: IconMovie,
-    isAvailable({ work, vods }): boolean {
+    isAvailable({ work, nextProgramChannelName, vods }): boolean {
+      if (nextProgramChannelName === this.channelName) return true
       this.vod = vods?.find(
         (x) => x.work_id === work.annictId && x.channel_id === annictChannelIds.abema && x.vod_code !== undefined
       )
@@ -188,7 +191,8 @@ const actions: { [K in SearchIntegrationKey]: SearchIntegrationAction<K> } = {
     channelName: 'Amazon プライム・ビデオ',
     type: 'vod',
     icon: IconBrandAmazon,
-    isAvailable({ work, vods }): boolean {
+    isAvailable({ work, nextProgramChannelName, vods }): boolean {
+      if (nextProgramChannelName === this.channelName) return true
       this.vod = vods?.find(
         (x) => x.work_id === work.annictId && x.channel_id === annictChannelIds.prime_video && x.vod_code !== undefined
       )
@@ -364,6 +368,27 @@ export function FileSearchButton({ entryRef, configs }: FileSearchButtonProps): 
     )
   }
 
+  const integration2 = integrations.find((integration) =>
+      entry.nextProgram?.channel.name === integration.channelName
+  )
+  if (integration2) {
+    return (
+      <Button
+        fullWidth
+        disabled={isDisabled}
+        mt="md"
+        radius="md"
+        variant="light"
+        // eslint-disable-next-line react/jsx-no-bind
+        onClick={() => {
+          integration2.search({ work: entry.work, config: integration2.config, vods })
+        }}
+      >
+        {integration2.title}
+      </Button>
+    )
+  }
+
   return (
     <Menu withinPortal position="bottom-start" transitionProps={{ transition: 'pop-top-right' }} width={220}>
       <Menu.Target>
@@ -381,7 +406,7 @@ export function FileSearchButton({ entryRef, configs }: FileSearchButtonProps): 
       </Menu.Target>
       <Menu.Dropdown>
         {integrations
-          .filter((integration) => integration.isAvailable({ work: entry.work, config: integration.config, vods }))
+          .filter((integration) => integration.isAvailable({ work: entry.work, nextProgramChannelName: entry.nextProgram?.channel.name, config: integration.config, vods }))
           .map((integration) => {
             const { icon: Icon } = integration
 

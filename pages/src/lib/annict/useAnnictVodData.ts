@@ -21,7 +21,7 @@ export function useAnnictVodData(enabled = true): AnnictVodData[] {
 }
 
 async function fetchAnnictVodData(): Promise<AnnictVodData[]> {
-  const response = await fetch('https://raw.githubusercontent.com/SlashNephy/anime-vod-data/master/dist/data.json')
+  const response = await fetch('https://raw.githubusercontent.com/m-o-s-m/anime-vod-data/master/dist/data.json')
 
   return response.json()
 }

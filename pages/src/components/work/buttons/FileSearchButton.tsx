@@ -29,6 +29,7 @@ import type { TablerIconsProps } from '@tabler/icons-react'
 type SearchIntegrationActionContext<K extends SearchIntegrationKey> = {
   work: { title: string; annictId: number }
   nextProgramChannelName?: string
+  nextEpisodeNumber?: number | null
   config: SearchIntegrationConfig<K>
   vods?: AnnictVodData[]
 }
@@ -88,10 +89,14 @@ const actions: { [K in SearchIntegrationKey]: SearchIntegrationAction<K> } = {
 
       return this.vod !== undefined
     },
-    search({ work }) {
+    search({ work, nextEpisodeNumber }) {
       // 参照可能な場合は直接開く
       if (this.vod !== undefined) {
-        const url = `https://animestore.docomo.ne.jp/animestore/ci_pc?workId=${this.vod.vod_code}`
+        let url = `https://animestore.docomo.ne.jp/animestore/ci_pc?workId=${this.vod.vod_code}`
+        // 話数のパラメータを追加する
+        if (nextEpisodeNumber) {
+          url += `&partId=${this.vod.vod_code}${String(nextEpisodeNumber).padStart(3, '0')}`
+        }
         window.open(url)
 
         return
@@ -304,6 +309,9 @@ export function FileSearchButton({ entryRef, configs }: FileSearchButtonProps): 
             name
           }
         }
+        nextEpisode {
+          number
+        }
         ...useShouldDisableButton_LibraryEntry
       }
     `,
@@ -360,7 +368,7 @@ export function FileSearchButton({ entryRef, configs }: FileSearchButtonProps): 
         variant="light"
         // eslint-disable-next-line react/jsx-no-bind
         onClick={() => {
-          integration.search({ work: entry.work, config: integration.config, vods })
+          integration.search({ work: entry.work, nextEpisodeNumber: entry.nextEpisode?.number, config: integration.config, vods })
         }}
       >
         {integration.title}
@@ -381,7 +389,7 @@ export function FileSearchButton({ entryRef, configs }: FileSearchButtonProps): 
         variant="light"
         // eslint-disable-next-line react/jsx-no-bind
         onClick={() => {
-          integration2.search({ work: entry.work, config: integration2.config, vods })
+          integration2.search({ work: entry.work, nextEpisodeNumber: entry.nextEpisode?.number, config: integration2.config, vods })
         }}
       >
         {integration2.title}

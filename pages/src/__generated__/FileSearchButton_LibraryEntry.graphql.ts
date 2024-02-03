@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a3eec3a069de9c546be21c7979b6a553>>
+ * @generated SignedSource<<84366488f159ba8843d2feff42807f57>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,9 @@
 import { Fragment, ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type FileSearchButton_LibraryEntry$data = {
+  readonly nextEpisode: {
+    readonly number: number | null | undefined;
+  } | null | undefined;
   readonly nextProgram: {
     readonly channel: {
       readonly name: string;
@@ -89,6 +92,24 @@ const node: ReaderFragment = {
       "storageKey": null
     },
     {
+      "alias": null,
+      "args": null,
+      "concreteType": "Episode",
+      "kind": "LinkedField",
+      "name": "nextEpisode",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "number",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
       "args": null,
       "kind": "FragmentSpread",
       "name": "useShouldDisableButton_LibraryEntry"
@@ -98,6 +119,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "24164d51fbb695ee314f126474ba030a";
+(node as any).hash = "61f16b1769257d82f5105be8bff2086a";
 
 export default node;

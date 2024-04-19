@@ -369,13 +369,12 @@ export function FileSearchButton({ entryRef, configs }: FileSearchButtonProps): 
     return (
       <Button
         fullWidth
-        disabled={isDisabled}
         mt="md"
         radius="md"
         variant="light"
         // eslint-disable-next-line react/jsx-no-bind
         onClick={() => {
-          integration.search({ work: entry.work, nextEpisodeNumber: entry.nextEpisode?.number, config: integration.config, vods })
+          integration?.search({ work: entry.work, nextEpisodeNumber: entry.nextEpisode?.number, config: integration.config, vods })
         }}
       >
         {integration.title}

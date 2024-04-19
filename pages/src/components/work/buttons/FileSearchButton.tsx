@@ -354,10 +354,17 @@ export function FileSearchButton({ entryRef, configs }: FileSearchButtonProps): 
   // }
 
   // annict側で設定したストリーミングサービスで視聴可能な場合は視聴ページへのリンクを表示する
-  const integration = integrations.find((integration) =>
+  let integration = integrations.find((integration) =>
     integration.isAvailable({ work: entry.work, config: integration.config, vods }) &&
       entry.nextProgram?.channel.name === integration.channelName
   )
+
+  if (!integration) {
+    integration = integrations.find((integration) =>
+      entry.nextProgram?.channel.name === integration.channelName
+    )
+  }
+
   if (integration) {
     return (
       <Button
@@ -372,27 +379,6 @@ export function FileSearchButton({ entryRef, configs }: FileSearchButtonProps): 
         }}
       >
         {integration.title}
-      </Button>
-    )
-  }
-
-  const integration2 = integrations.find((integration) =>
-      entry.nextProgram?.channel.name === integration.channelName
-  )
-  if (integration2) {
-    return (
-      <Button
-        fullWidth
-        disabled={isDisabled}
-        mt="md"
-        radius="md"
-        variant="light"
-        // eslint-disable-next-line react/jsx-no-bind
-        onClick={() => {
-          integration2.search({ work: entry.work, nextEpisodeNumber: entry.nextEpisode?.number, config: integration2.config, vods })
-        }}
-      >
-        {integration2.title}
       </Button>
     )
   }
